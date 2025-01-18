@@ -1,5 +1,5 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
-import { GroupMessage, Message, MessageType } from "../models/Message.js";
+import { GroupMessage, UserMessage, ThreadType } from "../models/index.js";
 import { apiFactory } from "../utils.js";
 
 export type UndoResponse = {
@@ -8,8 +8,8 @@ export type UndoResponse = {
 
 export const undoFactory = apiFactory<UndoResponse>()((api, ctx, utils) => {
     const URLType = {
-        [MessageType.DirectMessage]: utils.makeURL(`${api.zpwServiceMap.chat[0]}/api/message/undo`),
-        [MessageType.GroupMessage]: utils.makeURL(`${api.zpwServiceMap.group[0]}/api/group/undomsg`),
+        [ThreadType.User]: utils.makeURL(`${api.zpwServiceMap.chat[0]}/api/message/undo`),
+        [ThreadType.Group]: utils.makeURL(`${api.zpwServiceMap.group[0]}/api/group/undomsg`),
     };
     /**
      * Undo a message
@@ -18,8 +18,8 @@ export const undoFactory = apiFactory<UndoResponse>()((api, ctx, utils) => {
      *
      * @throws ZaloApiError
      */
-    return async function undo(message: Message | GroupMessage) {
-        if (!(message instanceof Message) && !(message instanceof GroupMessage))
+    return async function undo(message: UserMessage | GroupMessage) {
+        if (!(message instanceof UserMessage) && !(message instanceof GroupMessage))
             throw new ZaloApiError(
                 "Expected Message or GroupMessage instance, got: " + (message as unknown as any)?.constructor?.name,
             );
